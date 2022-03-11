@@ -11,12 +11,14 @@ class LoginController {
     async login(req, res) {
         try {
             const { email, password } = req.body
+
+            //Search user
             const data = await user.findOne({ email })
-            // console.log("Site URL: ", req.protocol + '://' + req.get('host') + req.originalUrl)
 
             // Checks if password match
             if (await bcrypt.compare(password, data.password)) {
-                const token = jwt.sign({ id: data._id.toString(), email: data.email }, JWT_SECRET, { expiresIn: '10d' });
+                //Sign jwt token at login to user
+                const token = jwt.sign({ id: data._id.toString(), email: data.email }, JWT_SECRET, { expiresIn: '7d' })
 
                 return res.status(200).json({ success: true, token: token })
             } else {
@@ -28,115 +30,42 @@ class LoginController {
     }
     async changePassword(req, res) {
         try {
-            const { email, password, token } = req.body
-            const data = await user.findOne({ email })
+            const { token } = req.params
 
-            //Verify if jwt token match
-            const { id } = jwt.verify(token, JWT_SECRET)
+            //Verify jwt token
+            const { id, email } = jwt.verify(token, JWT_SECRET)
 
-            if (id == data._id) {
-                const hashedPassword = await bcrypt.hash(password, 10)
-                data.password = hashedPassword
-                await data.save()
+            //Search user to update
+            const data = await user.findOne({ id, email })
 
-                return res.status(200).json({ success: true, data })
-            } else {
-                return res.status(401).json({ success: false, error: 'Token invalido' })
-            }
+            // Hash password
+            const hashedPassword = await bcrypt.hash(req.body.password, 10)
+            data.password = hashedPassword
+            await data.save()
+
+            return res.status(200).json({ success: true, msg: "Password updated" })
 
         } catch (error) {
-            res.status(401).json({ success: false, error: 'E-mail ou senha invalida' })
+            res.status(401).json({ success: false, error: 'Id invalid' })
         }
     }
     async forgotPassword(req, res) {
+        try {
+            const { email } = req.body
 
-        const { method } = req
+            //Search user to reset password
+            const data = await user.findOne({ email })
 
-        switch (method) {
-            case 'GET':
-                try {
-                    res.status(200).json({ success: true, msg: "Página forgotPassword - GET" })
-                } catch (error) {
-                    res.status(500).json({ success: false })
-                }
-                break
-            case 'POST':
-                try {
-                    const { email } = req.body
-                    const data = await user.findOne({ email })
+            //Sign jwt token
+            const token = jwt.sign({ id: data._id, email: data.email }, JWT_SECRET, { expiresIn: '24h' })
+            
+            // Sendo reset password link to email
+            const link = `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
 
-                    const payload = {
-                        id: data._id,
-                        email: data.email
-                    }
+            return res.status(200).json({ success: true, msg: 'Reset password link was send to your email', link })
 
-                    const token = jwt.sign(payload, data.password, { expiresIn: '24h' })
-                    const link = `${req.protocol + '://' + req.get('host') + req.originalUrl + '/' + `${data._id}` + '/' + `${token}`}`
-                    // Sendo to email TO DO
-                    console.log(link)
-
-                    res.status(200).json({ success: true, msg: 'Link para resetar sua senha foi enviado a seu e-mail' })
-
-                } catch (error) {
-                    res.status(401).json({ success: false, error: 'E-mail invalido' })
-                }
-                break
-            default:
-                res.status(500).json({ success: false })
-                break
-        }
-    }
-    async resetPassword(req, res) {
-
-        const { method } = req
-
-        switch (method) {
-            case 'GET':
-                try {
-                    const { id, token } = req.params
-
-                    // Checks if this id exists in the database
-                    const data = await user.findOne({ id })
-
-                    if (id == data._id) {
-                        //Verify if jwt token match
-                        jwt.verify(token, data.password)
-
-                        return res.status(200).json({ success: true, data, MSG: "Página resetPassword - GET" })
-                    } else {
-                        return res.status(401).json({ success: false, error: 'Token invalido' })
-                    }
-                } catch (error) {
-                    res.status(500).json({ success: false })
-                }
-                break
-            case 'PATCH':
-                try {
-                    const { id, token } = req.params
-                    const { password } = req.body
-
-                    const data = await user.findOne({ id })
-                    
-                    if (id == data._id) {
-                        //Verify if jwt token match
-                        jwt.verify(token, data.password)
-
-                        const hashedPassword = await bcrypt.hash(password, 10)
-                        data.password = hashedPassword
-                        await data.save()
-
-                        return res.status(200).json({ success: true, data })
-                    } else {
-                        return res.status(404).json({ success: false, error: 'Id invalido1' })
-                    }
-
-                } catch (error) {
-                    res.status(404).json({ success: false, error: 'Id invalido2' })
-                }
-                break
-            default:
-                res.status(400).json({ success: false })
-                break
+        } catch (error) {
+            res.status(401).json({ success: false, error: 'Invalid email' })
         }
     }
 }

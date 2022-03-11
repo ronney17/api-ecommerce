@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
         maxlength: [11, 'CPF deve conter 11 caracteres'],
     },
     telephone: {
-        /* The telephone number of your User */
+        /* The telephone number of this User */
 
         type: String,
         required: [true, 'Por favor, insira um número de telefone'],
@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Por favor, insira uma data de nascimento']
     },
     sex: {
-        /* user sex */
+        /* User sex */
 
         type: String,
         default: 'Não informado'
@@ -53,6 +53,13 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Por favor, insira uma senha.'],
         minlength: [8, 'Senha deve conter no mínimo 8 caracteres']
+    },
+    activation: {
+
+        /* Is User activated? */
+        type: Boolean,
+        required: true,
+        default: false
     }
 
 },{ timestamps: true })
