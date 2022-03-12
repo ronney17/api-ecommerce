@@ -1,6 +1,7 @@
 const user = require("../model/user")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const sendMail = require('../../utils/sendEmail')
 require('dotenv').config()
 
 //get the jwt secret from .env
@@ -58,12 +59,22 @@ class LoginController {
 
             //Sign jwt token
             const token = jwt.sign({ id: data._id, email: data.email }, JWT_SECRET, { expiresIn: '24h' })
-            
+
             // Sendo reset password link to email
-            const link = `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
+            try {
+                await sendMail({
+                    to: data.email,
+                    subject: "Password reset request",
+                    name: data.name,
+                    link: `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
 
-            return res.status(200).json({ success: true, msg: 'Reset password link was send to your email', link })
+                })
+                //Success email send
+                return res.status(200).json({ success: true, msg: 'Reset password link was send to your email' })
 
+            } catch (error) {
+                res.status(500).json({ success: false, error: 'Error email not send' })
+            }
         } catch (error) {
             res.status(401).json({ success: false, error: 'Invalid email' })
         }

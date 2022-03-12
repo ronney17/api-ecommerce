@@ -1,6 +1,7 @@
 const user = require("../model/user")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const sendMail = require('../../utils/sendEmail')
 require('dotenv').config()
 
 //Get the jwt secret from .env
@@ -24,6 +25,22 @@ class UserController {
             //Create user
             const data = await user.create(req.body)
 
+            // Sendo activation link to email - TODO
+            // try {
+            //     await sendMail({
+            //         to: data.email,
+            //         subject: "Activate your Trilla account",
+            //         name: data.name,
+            //         link: `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
+
+            //     })
+            //     //Success email send
+            //     return res.status(200).json({ success: true, msg: 'Reset password link was send to your email' })
+
+            // } catch (error) {
+            //     res.status(500).json({ success: false, error: 'Error email not send' })
+            // }
+
             // Send activation email with token to user - To do
             res.status(200).json({ success: true, data })
         } catch (error) {
@@ -35,14 +52,14 @@ class UserController {
             const { token } = req.params
 
             //Verify jwt token
-            const { id } = jwt.verify(token, JWT_SECRET)
+            const { id, email } = jwt.verify(token, JWT_SECRET)
 
             // Hash password
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
             req.body.password = hashedPassword
 
             //Search user and update
-            const data = await user.findOneAndUpdate({ id }, req.body)
+            const data = await user.findOneAndUpdate({ id, email }, req.body)
 
             return res.status(200).json({ success: true, msg: "User updated" })
 
@@ -55,10 +72,10 @@ class UserController {
             const { token } = req.params
 
             //Verify jwt token
-            const { id } = jwt.verify(token, JWT_SECRET)
+            const { id, email } = jwt.verify(token, JWT_SECRET)
 
             //Search user and update
-            const data = await user.deleteOne({ id })
+            const data = await user.deleteOne({ id, email })
 
             return res.status(200).json({ success: true, msg: "User deleted" })
 
