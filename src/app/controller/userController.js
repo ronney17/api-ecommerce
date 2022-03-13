@@ -25,34 +25,49 @@ class UserController {
             //Create user
             const data = await user.create(req.body)
 
-            // Sendo activation link to email - TODO
-            // try {
-            //     await sendMail({
-            //         to: data.email,
-            //         subject: "Activate your Trilla account",
-            //         name: data.name,
-            //         link: `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
+            //Sign jwt token to user
+            const token = jwt.sign({ id: data._id.toString(), email: data.email }, JWT_SECRET, { expiresIn: '24h' })
 
-            //     })
-            //     //Success email send
-            //     return res.status(200).json({ success: true, msg: 'Reset password link was send to your email' })
+            // Sendo activation link to email
+            try {
+                await sendMail({
+                    to: data.email,
+                    subject: "Activate your Trilla account",
+                    email: `Hello ${data.name},
 
-            // } catch (error) {
-            //     res.status(500).json({ success: false, error: 'Error email not send' })
-            // }
+                    Please activate your account on the Trilla e-commerce.
+                    
+                    You can activate your account by clicking the link below:
+                
+                    ${req.protocol + '://' + req.get('host') + '/user' + '/activate' + '/' + `${token}`}
+                    
+                    The Trilla team`
+                })
+                //Success email send
+                return res.status(200).json({ success: true, msg: 'Activation link was send to your email' })
 
-            // Send activation email with token to user - To do
-            res.status(200).json({ success: true, data })
+            } catch (error) {
+                res.status(500).json({ success: false, error: 'Error email not send' })
+            }
+
         } catch (error) {
             res.status(400).json({ success: false, error })
         }
     }
     async update(req, res) {
         try {
-            const { token } = req.params
+            const { activate, token } = req.params
 
             //Verify jwt token
             const { id, email } = jwt.verify(token, JWT_SECRET)
+            
+            //Activate user
+            if(activate) {
+                req.body.activation = true
+                const data = await user.findOneAndUpdate({ id, email }, req.body)
+
+                return res.status(200).json({ success: true, msg: "User activated" })
+            }
 
             // Hash password
             const hashedPassword = await bcrypt.hash(req.body.password, 10)

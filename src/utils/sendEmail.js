@@ -16,17 +16,7 @@ const sendMail = (options) => {
         from: process.env.MAIL_USERNAME,
         to: options.to,
         subject: options.subject,
-        text: `Hello ${options.name},
-    
-        Somebody requested a new password for the Trilla e-commerce account.
-        
-        No changes have been made to your account yet.
-        
-        You can reset your password by clicking the link below:
-    
-        ${options.link}
-        
-        The Trilla team`
+        text: options.email
     }
 
     transporter.sendMail(mailOptions, function (error, info) {

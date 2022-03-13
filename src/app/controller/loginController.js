@@ -65,9 +65,17 @@ class LoginController {
                 await sendMail({
                     to: data.email,
                     subject: "Password reset request",
-                    name: data.name,
-                    link: `${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}`
-
+                    email: `Hello ${data.name},
+    
+                    Somebody requested a new password for the Trilla e-commerce account.
+                    
+                    No changes have been made to your account yet.
+                    
+                    You can reset your password by clicking the link below:
+                
+                    ${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}
+                    
+                    The Trilla team`
                 })
                 //Success email send
                 return res.status(200).json({ success: true, msg: 'Reset password link was send to your email' })

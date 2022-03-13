@@ -12,6 +12,7 @@ routes.get("/user", UserController.read)
 routes.post("/user", UserController.create)
 routes.patch("/user/:token", UserController.update)
 routes.delete("/user/:token", UserController.delete)
+routes.patch("/user/:activate/:token", UserController.update)
 
 // Login
 routes.post("/login", LoginController.login)
