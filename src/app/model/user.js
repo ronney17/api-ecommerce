@@ -54,8 +54,59 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Por favor, insira uma senha.'],
         minlength: [8, 'Senha deve conter no mínimo 8 caracteres']
     },
-    activation: {
+    type: {
+        /* User type */
 
+        type: Number,
+        required: [true, 'Por favor, insira o tipo de usuário.'],
+        default: 1
+    },
+    addresses: [{
+        cep: {
+            /* User type */
+    
+            type: String,
+            required: [true, 'Por favor, insira o cep.'],
+            minlength: [8, 'Cep deve conter no mínimo 8 números']
+        },
+        street: {
+            /* User street name */
+    
+            type: String,
+            required: [true, 'Por favor, insira o nome da rua.']
+        },
+        number: {
+            /* User house number */
+    
+            type: String,
+            required: [true, 'Por favor, insira o número da casa.']
+        },
+        neighborhood: {
+            /* User neighborhood */
+    
+            type: String,
+            required: [true, 'Por favor, insira o bairro.']
+        },
+        city: {
+            /* User city */
+    
+            type: String,
+            required: [true, 'Por favor, insira a cidade.']
+        },
+        state: {
+            /* User state */
+    
+            type: String,
+            required: [true, 'Por favor, insira o estado.']
+        },
+        complement: {
+            /* User address complement */
+    
+            type: String,
+            default: 'Não informado'
+        }
+    }],
+    activation: {
         /* Is User activated? */
         type: Boolean,
         required: true,
