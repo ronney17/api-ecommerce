@@ -34,10 +34,10 @@ class LoginController {
             const { token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
+            const { id } = jwt.verify(token, JWT_SECRET)
 
             //Search user to update
-            const data = await user.findOne({ id, email })
+            const data = await user.findById(id)
 
             // Hash password
             const hashedPassword = await bcrypt.hash(req.body.password, 10)

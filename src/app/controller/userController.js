@@ -59,12 +59,12 @@ class UserController {
             const { activate, token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
-            
+            const { id } = jwt.verify(token, JWT_SECRET)
+
             //Activate user
-            if(activate) {
+            if (activate) {
                 req.body.activation = true
-                const data = await user.findOneAndUpdate({ id, email }, req.body)
+                const data = await user.findByIdAndUpdate(id, req.body)
 
                 return res.status(200).json({ success: true, msg: "User activated" })
             }
@@ -74,7 +74,7 @@ class UserController {
             req.body.password = hashedPassword
 
             //Search user and update
-            const data = await user.findOneAndUpdate({ id, email }, req.body)
+            const data = await user.findByIdAndUpdate(id, req.body)
 
             return res.status(200).json({ success: true, msg: "User updated" })
 
@@ -84,16 +84,24 @@ class UserController {
     }
     async delete(req, res) {
         try {
-            const { token } = req.params
+            const { idToDelete, token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
+            const { id } = jwt.verify(token, JWT_SECRET)
 
-            //Search user and update
-            const data = await user.deleteOne({ id, email })
+            //Search user
+            const data = await user.findById(id)
 
-            return res.status(200).json({ success: true, msg: "User deleted" })
+            //Verify if user is admin
+            if (data.type == 2) {
+                //Search user and delete
+                const data = await user.findByIdAndDelete(idToDelete)
 
+                return res.status(200).json({ success: true, msg: "User deleted" })
+            }
+
+            //User is not admin
+            res.status(401).json({ success: false })
         } catch (error) {
             res.status(401).json({ success: false, error: 'Id invalid' })
         }

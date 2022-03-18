@@ -43,15 +43,15 @@ class ProductController {
             const { idProduct, token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
+            const { id } = jwt.verify(token, JWT_SECRET)
 
             //Search user
-            const data = await user.findOne({ id, email })
+            const data = await user.findById(id)
 
             //Verify if user is admin
             if (data.type === 2) {
                 //Search product and update
-                const data = await product.findOneAndUpdate({ idProduct }, req.body)
+                const data = await product.findByIdAndUpdate(idProduct, req.body)
                 return res.status(200).json({ success: true, data })
             }
 
@@ -66,17 +66,16 @@ class ProductController {
             const { idProduct, token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
+            const { id } = jwt.verify(token, JWT_SECRET)
 
             //Search user
-            const data = await user.findOne({ id, email })
+            const data = await user.findById(id)
 
             //Verify if user is admin
-            if (data.type === 2) {
+            if (data.type == 2) {
                  //Search product and delete
+                const data = await product.findByIdAndDelete(idProduct)
 
-                 //Fix delete - Add mais um parâmetro pra remover - To Do
-                const data = await product.deleteOne({ idProduct })
                 return res.status(200).json({ success: true, data })
             }
 
