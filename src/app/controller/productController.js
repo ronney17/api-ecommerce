@@ -20,10 +20,10 @@ class ProductController {
             const { token } = req.params
 
             //Verify jwt token
-            const { id, email } = jwt.verify(token, JWT_SECRET)
+            const { id } = jwt.verify(token, JWT_SECRET)
 
             //Search user
-            const data = await user.findOne({ id, email })
+            const data = await user.findById(id)
 
             //Verify if user is admin
             if (data.type === 2) {
@@ -72,7 +72,7 @@ class ProductController {
             const data = await user.findById(id)
 
             //Verify if user is admin
-            if (data.type == 2) {
+            if (data.type === 2) {
                  //Search product and delete
                 const data = await product.findByIdAndDelete(idProduct)
 

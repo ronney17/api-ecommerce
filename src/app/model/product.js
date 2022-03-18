@@ -43,6 +43,13 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Por favor, insira a ficha técnica do produto']
     },
+    quantity: {
+        /* The quantity of the Product */
+
+        type: Number,
+        min: 1,
+        required: [true, 'Por favor, insira a quantidade do produto']
+    },
     ratings: [RatingSchema],
 
 }, { timestamps: true })
