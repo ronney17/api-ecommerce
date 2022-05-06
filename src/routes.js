@@ -1,7 +1,7 @@
 const express = require('express')
 const routes = express.Router()
 
-// Importe Controllers
+// Import Controllers
 const UserController = require('./app/controller/userController')   
 const LoginController = require('./app/controller/loginController')
 const ProductController = require('./app/controller/productController') 

@@ -45,8 +45,6 @@ class PurchaseController {
             //Verify jwt token
             jwt.verify(token, JWT_SECRET)
 
-            console.log("Passou o jwt veri")
-
             //Search product and update
             const statusPurchase = await purchase.findByIdAndUpdate(idPurchase, req.body)
 
