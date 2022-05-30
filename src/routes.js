@@ -1,4 +1,5 @@
 const express = require('express')
+var cors = require('cors')
 const routes = express.Router()
 
 // Import Controllers
@@ -6,6 +7,13 @@ const UserController = require('./app/controller/userController')
 const LoginController = require('./app/controller/loginController')
 const ProductController = require('./app/controller/productController') 
 const PurchaseController = require('./app/controller/purchaseController') 
+
+const corsOptions = {
+  origin: 'http://localhost:4200',
+  optionsSuccessStatus: 200
+}
+
+routes.use(cors(corsOptions))
 
 routes.get('/', function(req, res) {
   return res.send('API is Running ' + new Date())
