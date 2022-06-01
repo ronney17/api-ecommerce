@@ -1,19 +1,19 @@
 const mongoose = require('mongoose')
 
 const RatingSchema = new mongoose.Schema({
-     /* The rating of the Product, Comment and id of user */
+    /* The rating of the Product, Comment and id of user */
 
-     idUser: { 
-         type: String,
-     },
-     value: { 
-         type: Number,
-         min: 1,
-         max: 5 
-     },
-     comments: {
-         type: String
-     }
+    idUser: {
+        type: String,
+    },
+    value: {
+        type: Number,
+        min: 1,
+        max: 5
+    },
+    comments: {
+        type: String
+    }
 
 }, { timestamps: true })
 
@@ -50,7 +50,10 @@ const ProductSchema = new mongoose.Schema({
         min: 1,
         required: [true, 'Por favor, insira a quantidade do produto']
     },
-    ratings: [RatingSchema],
+    ratings: {
+        type: RatingSchema,
+        required: [true, 'Por favor, insira as avaliações']
+    },
 
 }, { timestamps: true })
 

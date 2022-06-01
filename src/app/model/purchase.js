@@ -37,7 +37,10 @@ const PurchaseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Por favor, insira o estado da compra']
     },
-    products: [ProductSchema],
+    products: {
+        type: ProductSchema,
+        required: [true, 'Por favor, insira o produto']
+    },
 
 }, { timestamps: true })
 

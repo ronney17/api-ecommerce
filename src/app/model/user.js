@@ -1,6 +1,53 @@
 const mongoose = require('mongoose')
 const { isEmail } = require('validator')
 
+/* The address of the user */
+const AddressSchema = new mongoose.Schema({
+    cep: {
+        /* User type */
+
+        type: String,
+        required: [true, 'Por favor, insira o cep.'],
+        minlength: [8, 'Cep deve conter no mínimo 8 números']
+    },
+    street: {
+        /* User street name */
+
+        type: String,
+        required: [true, 'Por favor, insira o nome da rua.']
+    },
+    number: {
+        /* User house number */
+
+        type: String,
+        required: [true, 'Por favor, insira o número da casa.']
+    },
+    neighborhood: {
+        /* User neighborhood */
+
+        type: String,
+        required: [true, 'Por favor, insira o bairro.']
+    },
+    city: {
+        /* User city */
+
+        type: String,
+        required: [true, 'Por favor, insira a cidade.']
+    },
+    state: {
+        /* User state */
+
+        type: String,
+        required: [true, 'Por favor, insira o estado.']
+    },
+    complement: {
+        /* User address complement */
+
+        type: String,
+        default: 'Não informado'
+    }
+})
+
 /* UserSchema will correspond to a collection in your MongoDB database. */
 const UserSchema = new mongoose.Schema({
     name: {
@@ -32,12 +79,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Por favor, insira uma data de nascimento']
     },
-    sex: {
-        /* User sex */
-
-        type: String,
-        default: 'Não informado'
-    },
     email: {
         /* User e-mail */
 
@@ -61,51 +102,10 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Por favor, insira o tipo de usuário.'],
         default: 1
     },
-    addresses: [{
-        cep: {
-            /* User type */
-    
-            type: String,
-            required: [true, 'Por favor, insira o cep.'],
-            minlength: [8, 'Cep deve conter no mínimo 8 números']
-        },
-        street: {
-            /* User street name */
-    
-            type: String,
-            required: [true, 'Por favor, insira o nome da rua.']
-        },
-        number: {
-            /* User house number */
-    
-            type: String,
-            required: [true, 'Por favor, insira o número da casa.']
-        },
-        neighborhood: {
-            /* User neighborhood */
-    
-            type: String,
-            required: [true, 'Por favor, insira o bairro.']
-        },
-        city: {
-            /* User city */
-    
-            type: String,
-            required: [true, 'Por favor, insira a cidade.']
-        },
-        state: {
-            /* User state */
-    
-            type: String,
-            required: [true, 'Por favor, insira o estado.']
-        },
-        complement: {
-            /* User address complement */
-    
-            type: String,
-            default: 'Não informado'
-        }
-    }],
+    addresses: {
+        type: AddressSchema,
+        required: [true, 'Por favor, insira o seu endereço']
+    },
     activation: {
         /* Is User activated? */
         type: Boolean,
@@ -113,6 +113,6 @@ const UserSchema = new mongoose.Schema({
         default: false
     }
 
-},{ timestamps: true })
+}, { timestamps: true })
 
 module.exports = mongoose.model('user', UserSchema)
