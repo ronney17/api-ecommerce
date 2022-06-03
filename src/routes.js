@@ -21,6 +21,7 @@ routes.get('/', function(req, res) {
 
 // Users
 routes.get('/user', UserController.read)
+routes.get('/user/:token', UserController.getUser)
 routes.post('/user', UserController.create)
 routes.patch('/user/:token', UserController.update)
 routes.delete('/user/:idToDelete/:token', UserController.delete)

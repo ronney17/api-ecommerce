@@ -16,6 +16,28 @@ class UserController {
             res.status(400).json({ success: false })
         }
     }
+    async getUser(req, res) {
+        try {
+            const { token } = req.params
+
+            //Verify jwt token
+            const { id } = jwt.verify(token, JWT_SECRET)
+
+            //Search user to update
+            const data = await user.findById(id)
+
+            //User is activated
+            if (data.activation === true) {
+                data.password = undefined
+                return res.status(200).json(data)
+            }else{
+                return res.status(423).json({ success: false, msg: "User is not activated" })
+            }
+
+        } catch (error) {
+            res.status(401).json({ success: false, error: 'Id invalid' })
+        }
+    }
     async create(req, res) {
         try {
             // Hash password
@@ -26,7 +48,7 @@ class UserController {
             const data = await user.create(req.body)
 
             //Sign jwt token to user
-            const token = jwt.sign({ id: data._id.toString(), email: data.email }, JWT_SECRET, { expiresIn: '24h' })
+            const token = jwt.sign({ id: data._id.toString(), email: data.email }, JWT_SECRET, { expiresIn: '365d' })
 
             // Sendo activation link to email
             try {
