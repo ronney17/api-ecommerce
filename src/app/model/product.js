@@ -1,22 +1,5 @@
 const mongoose = require('mongoose')
 
-const RatingSchema = new mongoose.Schema({
-    /* The rating of the Product, Comment and id of user */
-
-    idUser: {
-        type: String,
-    },
-    value: {
-        type: Number,
-        min: 1,
-        max: 5
-    },
-    comments: {
-        type: String
-    }
-
-}, { timestamps: true })
-
 /* ProductSchema will correspond to a collection in your MongoDB database. */
 const ProductSchema = new mongoose.Schema({
     name: {
@@ -30,6 +13,12 @@ const ProductSchema = new mongoose.Schema({
 
         type: String,
         required: [true, 'Por favor, insira uma descrição'],
+    },
+    image: {
+        /* The Image path of the product */
+
+        type: String,
+        required: [true, 'Por favor, insira o caminho da imagem']
     },
     price: {
         /* The price of the Product */
@@ -49,11 +38,7 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         required: [true, 'Por favor, insira a quantidade do produto']
-    },
-    ratings: {
-        type: RatingSchema,
-        required: [true, 'Por favor, insira as avaliações']
-    },
+    }
 
 }, { timestamps: true })
 
