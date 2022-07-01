@@ -6,6 +6,7 @@ require('dotenv').config()
 
 //get the jwt secret from .env
 const JWT_SECRET = process.env.JWT_SECRET
+const URL_FRONT = process.env.URL_FRONT
 
 class LoginController {
 
@@ -73,7 +74,7 @@ class LoginController {
                     
                     You can reset your password by clicking the link below:
                 
-                    ${req.protocol + '://' + req.get('host') + '/change-password' + '/' + `${token}`}
+                    ${req.protocol + '://' + URL_FRONT + '/change-password' + '/' + `${token}`}
                     
                     The Trilla team`
                 })

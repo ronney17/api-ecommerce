@@ -38,6 +38,12 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         required: [true, 'Por favor, insira a quantidade do produto']
+    },
+    category: {
+        /* The category of the Product */
+
+        type: String,
+        required: [true, "Por favor, insira a categoria do produto"]
     }
 
 }, { timestamps: true })

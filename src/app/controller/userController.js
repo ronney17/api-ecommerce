@@ -6,6 +6,7 @@ require('dotenv').config()
 
 //Get the jwt secret from .env
 const JWT_SECRET = process.env.JWT_SECRET
+const URL_FRONT = process.env.URL_FRONT
 
 class UserController {
     async read(req, res) {
@@ -61,7 +62,7 @@ class UserController {
                     
                     You can activate your account by clicking the link below:
                 
-                    ${req.protocol + '://' + req.get('host') + '/user' + '/activate' + '/' + `${token}`}
+                    ${req.protocol + '://' + URL_FRONT + '/user' + '/activate' + '/' + `${token}`}
                     
                     The Trilla team`
                 })
@@ -85,7 +86,7 @@ class UserController {
 
             //Activate user
             if (activate) {
-                req.body.activation = true
+                // req.body.activation = true
                 const data = await user.findByIdAndUpdate(id, req.body)
 
                 return res.status(200).json({ success: true, msg: "User activated" })
